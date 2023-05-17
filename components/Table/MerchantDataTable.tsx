@@ -4,6 +4,14 @@ import { Row, Col } from "antd";
 import { DetailsButton, SuspendButton } from "../Buttons/Buttons";
 import three_dots from "../../public/ICONS/SVG/three_dots.svg";
 
+
+interface MerchantData {
+  name: string;
+  email: string;
+  active: boolean;
+  id: string;
+  country: string;
+}
 interface MerchantProps {
     merchantData: MerchantData
 }
