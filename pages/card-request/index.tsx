@@ -23,6 +23,7 @@ import { handleCurrentPagination } from "@/store/reducers/handleCardRequestFilte
 import { TableLoading } from "@/components/States/TableLoading";
 import { TableEmptyState } from "@/components/States/TableEmptyState";
 import { ErrorState } from "@/components/States/ErrorState";
+import Cookies from "js-cookie"
 
 function CardRequest() {
   interface RequestProps {
@@ -30,7 +31,7 @@ function CardRequest() {
     quantity: string;
     email: string;
     companyId: string;
-    id: string;
+    id: string; 
     requestBy: string;
   }
 
@@ -147,6 +148,9 @@ function CardRequest() {
     dispatch(savePage("card_request"));
     pageMounted.current = true;
   }, []);
+
+ 
+
 
   // useEffect(() => {
   //   dispatch(savePage("card_request"));

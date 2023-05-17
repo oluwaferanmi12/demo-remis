@@ -3,7 +3,7 @@ import { Row, Col } from "antd";
 
 const VoucherTableHeader = () => {
   return (
-    <div className="bg-[#1A2035]  px-6 py-3 text-[#D8DFEE]">
+    <div className="bg-[#1A2035]  px-6  pb-3 text-[#D8DFEE]">
       <Row>
         <Col xs={23}>
           <Row className="w-full ">

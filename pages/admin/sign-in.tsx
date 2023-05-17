@@ -14,6 +14,8 @@ import logo from "../../public/IMAGES/Group 2849/Group 2849.png";
 import emailValidate from "@/utils/ValidateEmail";
 import { saveUserDetails } from "@/utils/saveUserDetails";
 import { GetUserDetails } from "@/utils/GetUserDetails";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
 function SignIn() {
   const router = useRouter();
@@ -22,6 +24,10 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [disableButton, setDisableButton] = useState(true);
   const [error, setError] = useState("");
+
+  interface jwtDecodeProp {
+    exp: number;
+  }
 
   const validateFunction = ({
     email,
@@ -69,10 +75,30 @@ function SignIn() {
 
   useEffect(() => {
     // userPayload.isLoggedIn && router.push("/");
+    const dateValue = Math.floor(Date.now() / 1000);
+    if (document.cookie && document.cookie.includes("=")) {
+      const cookie_value: string[] = document.cookie.split("=");
+      if (cookie_value.length >= 2) {
+        let decodeJwt: jwtDecodeProp = { exp: 0 };
+        try {
+          decodeJwt = jwt_decode(cookie_value[1]);
+        } catch (error) {
+          // console.log(error);
+        }
+        if (dateValue >= decodeJwt.exp) {
+          localStorage.clear();
+          Cookies.remove("token");
+        } else {
+          router.push("/users");
+        }
+      }
+    }
 
     // check if user is logged in
+    // console.log(document.cookie.split)
+    // if(document.cookie && document.cookie.split("=")[])
 
-    GetUserDetails() && router.push("/");
+    // GetUserDetails() && router.push("/");
 
     if (passwordValue && email && emailValidate(email)) {
       setDisableButton(false);

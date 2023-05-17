@@ -41,7 +41,7 @@ export interface SingleMerchantObject {
   product: string;
 }
 
-function Merchants() {
+function Merchant() {
   const [singleMerchant, setSingleMerchant] = useState<SingleMerchantObject>({
     pin: "",
     amount: "",
@@ -98,4 +98,4 @@ function Merchants() {
   );
 }
 
-export default Merchants;
+export default Merchant;

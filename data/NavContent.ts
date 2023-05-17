@@ -9,7 +9,7 @@ import company_icon from "../public/ICONS/SVG/companyIcon.svg"
 export const navContent = [
   
   { name: "Users", icon: user, url: "/users", alias: "user" },
-  { name: "Kill switch", icon: merchant, url: "/admin/dashboard", alias: "dashboard" },
+  { name: "Kill switch", icon: merchant, url: "/admin/killswitch", alias: "killswitch" },
   { name: "Company", icon: company_icon, url: "/companies", alias: "company" },
 
   { name: "Billings", icon: billing, url: "/billings", alias: "billing" },

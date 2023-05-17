@@ -25,8 +25,12 @@ import paginatePrevious from "../public/ICONS/SVG/paginatePrevious.svg";
 import paginateNext from "../public/ICONS/SVG/paginateNext.svg";
 import { setCurrentPagination } from "@/store/reducers/handleCompanyFilter";
 import { TableEmptyState } from "@/components/States/TableEmptyState";
+import withAuth from "@/components/HOC/WithAuth";
+import { GetServerSideProps } from "next";
+import { extractCookie } from "@/utils/getTokenFromCookie";
+import { validateCookie } from "@/utils/validateCookie";
 
-function Companies() {
+function Companies({ token }: { token: string }) {
   interface Company {
     name: string;
     email: string;
@@ -384,5 +388,21 @@ function Companies() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+  const validCookie = validateCookie(req);
+  if (!validCookie) {
+    return {
+      redirect: {
+        destination: "/admin/sign-in",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+};
 
 export default Companies;

@@ -30,6 +30,10 @@ import currentPage, { savePage } from "@/store/reducers/currentPage";
 import { PageHeaderLoader } from "@/components/States/PageHeaderLoader";
 import { ErrorState } from "@/components/States/ErrorState";
 import { setCurrentPagination } from "@/store/reducers/handleDateFilter";
+import { GetServerSideProps } from "next";
+import { extractCookie } from "@/utils/getTokenFromCookie";
+import axios, { AxiosError } from "axios";
+import { validateCookie } from "@/utils/validateCookie";
 
 export default function Home() {
   interface Customer {
@@ -108,7 +112,6 @@ export default function Home() {
     // set that the page is mounted
 
     if (pageMounted.current) {
-      console.log("pageMounted");
       apiCall(
         "get",
         `Admin/AllUsers?Query=${queryValue}&Page=${currentPagination}&PageLimit=${10}&StartDate=${dateSet}`
@@ -150,7 +153,6 @@ export default function Home() {
 
   useEffect(() => {
     if (emailToSuspend) {
-      console.log("emailToSuspend");
       apiCall("post", `Admin/BlockUser/${emailToSuspend}`)
         .then((res) => {
           apiCall(
@@ -206,7 +208,6 @@ export default function Home() {
 
   useEffect(() => {
     if (unSuspendEmail) {
-      console.log("unsuspend-email");
       apiCall("post", `Admin/UnBlockUser/${unSuspendEmail}`)
         .then((res) => {
           apiCall(
@@ -261,39 +262,40 @@ export default function Home() {
   }, [unSuspendEmail]);
 
   useEffect(() => {
-    console.log("triggered");
-    apiCall(
-      "get",
-      `Admin/AllUsers?Query=${queryValue}&StartDate=${dateSet}&PageLimit=${10}&Page=${1}&EndDate=${endDate}`
-    )
-      .then((res) => {
-        const { totalPages, currentPage, totalData } =
-          res?.data.data.pagination;
-        setTotalUser(totalData);
-        dispatch(setCurrentPagination(currentPage));
-        setCustomers(res?.data.data.users);
+   
+      apiCall(
+        "get",
+        `Admin/AllUsers?Query=${queryValue}&StartDate=${dateSet}&PageLimit=${10}&Page=${currentPagination}&EndDate=${endDate}`
+      )
+        .then((res) => {
+          const { totalPages, currentPage, totalData } =
+            res?.data.data.pagination;
+          setTotalUser(totalData);
+          dispatch(setCurrentPagination(currentPage));
+          setCustomers(res?.data.data.users);
 
-        const paginationArray = [];
-        for (let i = 1; i <= totalPages; i++) {
-          paginationArray.push(i);
-        }
-        setPaginationValues(paginationArray);
-        sortCurrentPagination(paginationArray, currentPage, totalPages);
-      })
-      .catch((e) => {
-        if (e.response?.status == 401) {
-          dispatch(logoutUser());
-          logOutUser();
-          router.push("/admin/sign-in");
-        } else {
-          setErrorOccured(true);
-        }
-      })
-      .finally(() => {
-        date_triggered.current = true;
-        setIsLoading(false);
-        pageMounted.current = true;
-      });
+          const paginationArray = [];
+          for (let i = 1; i <= totalPages; i++) {
+            paginationArray.push(i);
+          }
+          setPaginationValues(paginationArray);
+          sortCurrentPagination(paginationArray, currentPage, totalPages);
+        })
+        .catch((e) => {
+          if (e.response?.status == 401) {
+            dispatch(logoutUser());
+            logOutUser();
+            router.push("/admin/sign-in");
+          } else {
+            setErrorOccured(true);
+          }
+        })
+        .finally(() => {
+          date_triggered.current = true;
+          setIsLoading(false);
+          pageMounted.current = true;
+        });
+   
   }, [dateSet, queryValue, endDate]);
 
   return (
@@ -496,9 +498,18 @@ export default function Home() {
   );
 }
 
-// export const getServerSideProps:GetServerSideProps = async (context:GetServerSidePropsContext) => {
-//     console.log("token_value" , store.getState().userReducer.userPayload?.token)
-//     return {
-//       props: {},
-//     };
-// }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+  const validCookie = validateCookie(req);
+  if (!validCookie) {
+    return {
+      redirect: {
+        destination: "/admin/sign-in",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+};

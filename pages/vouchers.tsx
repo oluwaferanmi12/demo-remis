@@ -7,13 +7,11 @@ import { Navbar } from "@/components/Nav/Navbar";
 import styles from "../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
-import { TableNav } from "@/components/Nav/TableNav";
+import moment from "moment";
 import search from "../public/ICONS/SVG/search.svg";
 import { setQuery } from "@/store/reducers/handleDateFilter";
-import { CompanyFilterForm } from "@/components/Forms/CompanyFilterForm";
 import { DatePicker, Space, Switch } from "antd";
 import { TableWrapper } from "@/components/Wrapper/TableWrapper";
-import Select from "react-select";
 import VoucherTableHeader from "@/components/Table/VoucherTableHeader";
 import VoucherDataTable from "@/components/Table/VoucherDataTable";
 import { RootState } from "@/store/store";
@@ -24,10 +22,10 @@ import paginatePrevious from "../public/ICONS/SVG/paginatePrevious.svg";
 import paginateNext from "../public/ICONS/SVG/paginateNext.svg";
 import { apiCall } from "@/apiClient/api";
 import { logOutUser } from "@/utils/logOutUser";
-import { logoutUser } from "@/store/reducers/user";
 import { TableEmptyState } from "@/components/States/TableEmptyState";
 import notFound from "@/public/ICONS/SVG/txnNotFound.svg";
 import { VoucherModal } from "@/components/Modals/VoucherModal";
+import { VoucherFilterForm } from "@/components/Forms/VoucherFilterForm";
 
 export interface SingleVoucherObject {
   pin: string;
@@ -71,7 +69,7 @@ function Vouchers(
     dateConsumed: "",
     product: "",
   });
-  const [errorOccured, setErrorOccured] = useState(false);
+
   const [paginationClicked, setPaginationClicked] = useState(false);
   const [paginationValues, setPaginationValues] = useState<number[]>([]);
   const [paginationsShown, setPaginationsShown] = useState<(number | string)[]>(
@@ -87,6 +85,9 @@ function Vouchers(
   const { RangePicker } = DatePicker;
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const [queryValue, setQueryValue] = useState("");
+
   const [numberOfVouchers, setNumberOfVouchers] = useState("");
   const [query, setQuery] = useState("");
   const [eDate, setEDate] = useState("");
@@ -99,28 +100,12 @@ function Vouchers(
 
   const [option, setOption] = useState("");
   type SetOption = "all" | "used" | "unused";
-  // setOption("new value");
 
   const [value, setValue] = useState("");
 
   function handleChange(event: any) {
     setOption(event.target.value);
   }
-
-  // const handleFilter = (setVoucherList: Voucher[], setOption: SetOption) => {
-  //   let filteredVouchers: Voucher[] = [];
-
-  //   if (setOption === "used") {
-  //     filteredVouchers = setVoucherList.filter((item) => {item.isUsed === true && item.canBeUsedIn === "All"});
-  //   } else if (setOption === "unused") {
-  //     filteredVouchers = voucher.filter((item) => item.isUsed === false && item.canBeUsedIn === "All");
-  //   } else {
-  //   return   filteredVouchers = voucher.filter((item) =>  item.canBeUsedIn === "All");
-  //   }
-
-  //   // do something with the filteredVouchers array, like updating state or rendering a component
-  //   console.log(handleFilter)
-  // };
 
   useEffect(() => {
     if (currentPin) {
@@ -139,7 +124,6 @@ function Vouchers(
     }
   }, [currentPin]);
 
- 
   const getCurrentVoucher = (cardPin: string) => {};
   useEffect(() => {
     if (pageMounted.current) {
@@ -303,8 +287,14 @@ function Vouchers(
             ></div>
           </div>
 
-          <div className="p-4">
-            <div className="flex items-center justify-between">
+          <div className="p-4 ">
+            <div
+              className="flex items-center justify-between bg-[#202940] h-[85px] p-4"
+              style={{
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
               <form action="">
                 <div className="relative">
                   <div className="absolute top-3">
@@ -356,24 +346,16 @@ function Vouchers(
                     Unused
                   </option>
                 </select>
-                {/* <Select 
-                options={options} 
-               
-                // defaultInputValue="Company"
-                /> */}
+
                 <RangePicker />
-                <CompanyFilterForm />
+                <VoucherFilterForm />
               </div>
             </div>
-
             <TableWrapper>
               <div>
                 <VoucherTableHeader />
               </div>
               <div>
-                {/* <VoucherDataTable currentIndex={0} activeIndex={0} handleActive={function (value: number): void {
-              throw new Error("Function not implemented.");
-            } } active={false} id={""} voucherPin={0} dateGenerated={""} user={""} voucherStatus={""} amount={""} /> */}
                 <div>
                   {options === "all" ? (
                     voucherList.length == 0 ? (
@@ -388,7 +370,10 @@ function Vouchers(
                             <VoucherDataTable
                               handleCurrentPin={setCurrentPin}
                               voucherPin={item.pin}
-                              dateGenerated={item.dateGenerated}
+                              dateGenerated={moment(item.dateGenerated).format(
+                                "YY-MM-DD, HH:mm"
+                              )}
+                             
                               amount={item.amount}
                               user={item.user}
                               // count={index}
@@ -418,7 +403,10 @@ function Vouchers(
                             <VoucherDataTable
                               handleCurrentPin={setCurrentPin}
                               voucherPin={item.pin}
-                              dateGenerated={item.dateGenerated}
+                              dateGenerated={moment(item.dateGenerated).format(
+                                "YY-MM-DD, HH:mm"
+                              )}
+                             
                               amount={item.amount}
                               user={item.user}
                               // count={index}
@@ -448,7 +436,10 @@ function Vouchers(
                             <VoucherDataTable
                               handleCurrentPin={setCurrentPin}
                               voucherPin={item.pin}
-                              dateGenerated={item.dateGenerated}
+                              dateGenerated={moment(item.dateGenerated).format(
+                                "YY-MM-DD, HH:mm"
+                              )}
+                             
                               amount={item.amount}
                               user={item.user}
                               // count={index}
