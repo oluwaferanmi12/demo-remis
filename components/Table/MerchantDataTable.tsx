@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Row, Col } from "antd";
 import { DetailsButton, SuspendButton } from "../Buttons/Buttons";
 import three_dots from "../../public/ICONS/SVG/three_dots.svg";
-import { MerchantData } from "@/pages/merchants";
 
 interface MerchantProps {
     merchantData: MerchantData
