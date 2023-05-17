@@ -12,7 +12,7 @@ import { TransactionProp } from "@/pages/merchants/details";
 import eye from "@/public/ICONS/SVG/eye.svg"
 
 interface TableDataProps {
-  merchantDetails: TransactionProp;
+  merchantDetails?: TransactionProp;
 }
 
 export const LogsTxnData = ({ merchantDetails }: TableDataProps) => {
